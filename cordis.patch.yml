@@ -1,0 +1,5 @@
+# dsh-theater：把本插件挂进 profile 的插件树（Host 半）
+# 提供 theater_* 工具，让导演会话能建/唤醒角色会话并投递 cue。
+- insert:
+    - id: theater
+      name: dsh-theater
