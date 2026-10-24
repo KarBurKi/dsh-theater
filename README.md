@@ -53,6 +53,8 @@ New-Item -ItemType Junction -Path "$env:USERPROFILE\.dsh\profiles\<profile>\node
 
 client 半没有改——它只跟随宿主推的 `now`，宿主不推就不切。
 
+**正文一律用代码块包起来**：把 `text` 用三重反引号包住（` ```正文``` `）。语音播报（dsh-tts）会跳过代码块，不把投递内容念出来，不打断主人的语音消息。这条写进了工具 description，每次调用都看得到——别指望会话指令记着，AGENTS 只在会话启动时读一次。
+
 ## 并发与唤醒
 
 - 一个会话同时只允许一手 cue；`theater_say` 撞上未完成的手会直接报错。
