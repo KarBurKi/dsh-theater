@@ -1,6 +1,6 @@
 {
   "name": "dsh-theater",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "多角色剧场的执行器：为每个角色创建/唤醒独立会话，投递 cue 并取回台词。零依赖，不 import 核心包。",
   "type": "module",

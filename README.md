@@ -8,7 +8,7 @@
 | 工具 | 用途 |
 | --- | --- |
 | `theater_open` | 为角色创建独立会话（工作区 + 预设 `theater-actor`），可顺带绑音色 |
-| `theater_say` | 投一条 cue，等这一手演完，返回该角色输出原文（台词/行为/内心） |
+| `theater_say` | 投一条 cue，等这一手演完，返回该角色输出原文（台词/行为/内心）；默认后台送达、不切窗，`focus: true` 才把主人窗口切过去 |
 | `theater_bind` | 给已存在会话绑 GPT-SoVITS 音色（写 dsh-tts 的 `sessionVoices`） |
 | `theater_cast` | 演员表 + 存活状态 |
 
@@ -37,6 +37,21 @@ New-Item -ItemType Junction -Path "$env:USERPROFILE\.dsh\profiles\<profile>\node
 - 工具按 `dsh-tools` 的 `register(definition)` 契约手写（`parameters` 直接给 JSON Schema）。
 
 改这两处之前，先确认插件能不能 import 核心包。
+
+## 投递与切窗
+
+`theater_say` 默认**后台送达**：宿主不推 `now`，主人正在看的窗口不动，对方照常收消息、照常回话。
+
+要看戏时才传 `focus: true`——宿主把 `now` 推到目标会话，客户端轮询到就切过去（等同旧行为）。
+
+```jsonc
+{ "sessionId": "session-...", "text": "...", "focus": true }   // 切窗
+{ "sessionId": "session-...", "text": "..." }                   // 后台（默认）
+```
+
+`focus: false` 时也不会因为「导演回合结束」把视图切回场景：那条切回同样由 `focus: true` 才登记导演会话。
+
+client 半没有改——它只跟随宿主推的 `now`，宿主不推就不切。
 
 ## 并发与唤醒
 
