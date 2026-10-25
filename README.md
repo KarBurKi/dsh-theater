@@ -61,3 +61,13 @@ client 半没有改——它只跟随宿主推的 `now`，宿主不推就不切�
 - 会话未 live 时按演员表里的预设自动 `resume`。
 - 回合边界靠 `session/event` 的 `turn/start` → `assistant/message` → `turn/end` 判定，
   只有自己开过的回合才算数，避免被上一手的收尾提前唤醒。
+
+## 日志与排错（0.1.5）
+
+宿主侧的错误和警告一律走 `console.error` / `console.warn`，落在 stdout/stderr，被重启脚本捕获进 `tmp_all\host-out-*.log` 和 `host-err-*.log`。
+
+**不要用 `ctx.logger`。** DSH 的产品 profile 没有给 `ctx.logger` 挂 console exporter（宿主源码 `dsh-llm-deepseek-account/lib/index.js` 里的注释原话是 `product profiles mount no console exporter for ctx.logger`）：cordis 自带的默认 exporter 只把消息推进 1000 条的内存环形缓冲，`dsh-app-boot` 那个 exporter 阈值是 WARN 且只存进内存数组，**整个宿主没有任何 exporter 写 stdout**。
+
+0.1.4 及更早的 `session/event` 异常处理用的是 `ctx.logger?.warn?.(...)`——真出事时那条错误信息一个字也出不来。0.1.5 改成 `console.error("[theater] session/event 处理失败：", error)`，并且带上 `error` 本体而不是只取 `message`，栈才留得住。
+
+**这条没有测试覆盖**：theater 仓库里没有测试脚本，`probe.mjs` 是手动探针。这次改动的验证方式是读源码确认 `ctx.logger` 调用清零（只余注释）加 `node --check` 语法检查，不等于运行时验过；真正的确认要等下一次 `session/event` 抛出异常时看日志里有没有那一行。
